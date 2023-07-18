@@ -1,0 +1,17 @@
+- Appointment :
+    status: 
+        - 1: Đang xử lý
+        - 2: Chấp nhận
+        - 3: Từ chối
+
+- Role: 
+    - 1: Admin,
+    - 2: Politician,
+    - 3: Citizen
+
+- Level Management:
+    - 1: Nhà nước
+    - 2: cấp tỉnh
+    - 3: cấp huyện/ quận
+    - 4: cấp xã
+    - 5: cấp thôn
