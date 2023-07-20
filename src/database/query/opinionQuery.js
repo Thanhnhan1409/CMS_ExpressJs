@@ -85,7 +85,7 @@ const addOpinion = async (newOpinion) => {
         const opinion = await knex('opinions').insert({
             idCitizen,
             content,
-            createAt: new Date()
+            createdAt: new Date()
         })
 
         if(opinion) {

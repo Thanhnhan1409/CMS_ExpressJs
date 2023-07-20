@@ -1,9 +1,11 @@
 const express = require('express');
 const { addPolitician, updatePolitician, getPoliticianByData } = require('../../database/query/politicianQuery');
 const { deleteUserById } = require('../../database/query/userQuery');
+const authentication = require('../../middleware/authentication');
+const { isAdmin } = require('../../middleware/authorization');
 const politician_router = express.Router();
 
-politician_router.get('/:id', async (req, res) => {
+politician_router.get('/:id', [authentication], async (req, res) => {
     try {
         const id = req.params.id;
         const politician = await getPoliticianByData('idPolitician', id);
@@ -28,7 +30,7 @@ politician_router.get('/:id', async (req, res) => {
     }
 })
 
-politician_router.put('/:id', async (req, res) =>{
+politician_router.put('/:id',[authentication, isAdmin], async (req, res) =>{
     try {
         const id = req.params.id;
         const {  
@@ -57,7 +59,7 @@ politician_router.put('/:id', async (req, res) =>{
     }
 })
 
-politician_router.post('/', async (req, res) => {
+politician_router.post('/', [authentication, isAdmin], async (req, res) => {
     try {
         const id = req.body.idCitizen;
         const { 
@@ -86,7 +88,7 @@ politician_router.post('/', async (req, res) => {
     }
 })
 
-politician_router.delete('/:id', async (req, res) => {
+politician_router.delete('/:id', [authentication, isAdmin], async (req, res) => {
     try {
         const id = req.params.id;
         const politician = await deleteUserById(id, 'idPolitician', 2);

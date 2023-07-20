@@ -1,5 +1,6 @@
 const express = require('express');
 const { getOpinions, deleteOpinion, addOpinion } = require('../database/query/opinionQuery');
+const authentication = require('../middleware/authentication');
 const opinion_router = express.Router();
 
 opinion_router.get('/', async (req, res) => {
@@ -33,7 +34,7 @@ opinion_router.get('/', async (req, res) => {
     }
 })
 
-opinion_router.post('/', async (req, res) => {
+opinion_router.post('/', [authentication], async (req, res) => {
     try {
         const { idCitizen, content } = req.body
         const opinion = await addOpinion({ idCitizen, content });
@@ -56,7 +57,7 @@ opinion_router.post('/', async (req, res) => {
     }
 })
 
-opinion_router.delete('/:id', async (req, res) => {
+opinion_router.delete('/:id', [authentication], async (req, res) => {
     try {
         const id = req.params.id;
         const opinion = await deleteOpinion(id);

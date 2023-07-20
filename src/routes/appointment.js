@@ -1,8 +1,10 @@
 const express = require('express');
 const appointment_router = express.Router();
-const { getAppointments, getAppointmentsByData, addAppointment, updateAppointment, deleteAppointment } = require('../database/query/appointmentQuery')
+const authentication = require('../middleware/authentication')
+const { getAppointments, getAppointmentsByData, addAppointment, updateAppointment, deleteAppointment } = require('../database/query/appointmentQuery');
+const { isPolitician } = require('../middleware/authorization');
 
-appointment_router.get('/', async(req, res) => {
+appointment_router.get('/', authentication, async(req, res) => {
     try {
         const page_Size = parseInt(req.query.pageSize) || 10;
         const { page = 1, type = 'idAppointment', data ='' } = req.body;
@@ -32,7 +34,7 @@ appointment_router.get('/', async(req, res) => {
     }
 })
 
-appointment_router.get('/:type/:data', async (req, res) => {
+appointment_router.get('/:type/:data', [authentication, isPolitician],  async (req, res) => {
     try {
         const data = req.params.data;
         const type = req.params.type;
@@ -58,7 +60,7 @@ appointment_router.get('/:type/:data', async (req, res) => {
     }
 })
 
-appointment_router.post('/',async (req, res) => {
+appointment_router.post('/', authentication, async (req, res) => {
     try {
         const { 
             idCitizen,

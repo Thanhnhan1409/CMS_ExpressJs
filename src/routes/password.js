@@ -1,13 +1,10 @@
 const express = require('express');
 const password_router = express.Router();
-const crypto = require('crypto');
-const jwt = require('jsonwebtoken');
 const { getUserByData } = require('../database/query/userQuery');
-const hashPassword = require('../middleware/hashPassword')
-const knex = require('../database/connection');
 const changePassword = require('../database/query/passwordQuery');
+const authentication = require('../middleware/authentication');
 
-password_router.put("/changePassword/:id", async (req, res) => {
+password_router.put("/changePassword/:id", [authentication], async (req, res) => {
     try {
         const id = req.params.id;
         const { oldPassword, newPassword } = req.body;

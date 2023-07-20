@@ -7,8 +7,10 @@ const {
     updateUserById,
     deleteUserById,
 } = require('../../database/query/userQuery');
+const authentication = require('../../middleware/authentication');
+const { isAdmin, isPolitician } = require('../../middleware/authorization');
 
-user_router.get('/', async (req, res) => {
+user_router.get('/', authentication, async (req, res) => {
     try {
         const page_Size = parseInt(req.query.pageSize) || 10;
         const { page = 1, type = 'idCitizen', data='' } = req.body;
@@ -39,7 +41,7 @@ user_router.get('/', async (req, res) => {
     }
 });
 
-user_router.get('/listUsers/:role', async (req, res) => {
+user_router.get('/listUsers/:role', authentication, async (req, res) => {
     try {
         const role = req.params.role;
         const page_Size = parseInt(req.query.pageSize) || 10;
@@ -71,7 +73,7 @@ user_router.get('/listUsers/:role', async (req, res) => {
     }
 });
 
-user_router.get('/:id', async (req, res) => {
+user_router.get('/:id', authentication, async (req, res) => {
     const id = parseInt(req.params.id);
     try {
         const user = await getUserByData('idCitizen', id);
@@ -88,7 +90,7 @@ user_router.get('/:id', async (req, res) => {
     }
 });
 
-user_router.post('/', async (req, res) => {
+user_router.post('/',  async (req, res) => {
     const {
         name,
         password = '12345678',
@@ -149,7 +151,7 @@ user_router.post('/', async (req, res) => {
     }
 });
 
-user_router.put('/:id', async (req, res) => {
+user_router.put('/:id', [authentication, isAdmin, isPolitician], async (req, res) => {
     const {
         name,
         birth,
@@ -203,7 +205,7 @@ user_router.put('/:id', async (req, res) => {
     }
 });
 
-user_router.delete('/:id', async (req, res) =>{
+user_router.delete('/:id',[authentication, isAdmin, isPolitician], async (req, res) =>{
     try {
         const id = req.params.id;
         const user = await deleteUserById(id, 'idCitizen');
