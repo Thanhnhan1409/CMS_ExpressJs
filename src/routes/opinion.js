@@ -6,13 +6,15 @@ const opinion_router = express.Router();
 opinion_router.get('/', async (req, res) => {
     try {
         const page_Size = parseInt(req.query.pageSize) || 10;
-        const { page = 1, type = 'idCitizen', data='' } = req.body;
+        const { page = 1, type = 'idCitizen', data='', type2='', data2 ='' } = req.body;
 
         const { opinions, totalPage, totalPageData } = await getOpinions(
             page,
             page_Size,
             type,
             data,
+            type2,
+            data2
         );
 
         return res.status(200).json({

@@ -31,7 +31,8 @@ auth_router.post('/login', async (req, res) => {
                     },
                 );
                 return res.status(200).json({
-                    access_token: token,
+                    token: token,
+                    role: user[0].role,
                     message: 'Login susscess',
                 });
             } else {
@@ -47,5 +48,11 @@ auth_router.post('/login', async (req, res) => {
         });
     }
 });
+
+auth_router.get('/user', async (req, res) => {
+    return res.status(200).json({
+        message: 'ok'
+    })
+})
 
 module.exports = auth_router;

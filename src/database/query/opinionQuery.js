@@ -1,14 +1,18 @@
 const knex = require('../connection');
 
-const getOpinions = async (page, pageSize, type, data) => {
+const getOpinions = async (page, pageSize, type, data, type2, data2) => {
     const offset = (page - 1) * pageSize;
 
-    let opinions = await knex('opinions')
+    let query = knex('opinions')
         .select('*')
         .where(type, 'like', `%${data}%`)
         .offset(offset)
         .limit(pageSize);
-
+    if ( type2 && data2 )
+    {
+        query = query.andWhere(type2, data2);
+    }
+    let opinions = await query;
     opinions = Object.values(JSON.parse(JSON.stringify(opinions)));
     await Promise.all(
         opinions.map(async (opinion) => {

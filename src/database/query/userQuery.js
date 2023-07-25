@@ -1,16 +1,29 @@
 const knex = require('../connection');
 const hashPassword = require('../../middleware/hashPassword');
 
-const getUsers = async (page, pageSize, type, data) => {
+const getUsers = async (page, pageSize, type, data, type2, data2) => {
     const offset = (page - 1) * pageSize;
 
-    let users = await knex('citizens')
+    let query =  knex('citizens')
         .select('*')
-        .where(type, 'like', `%${data}%`)
-
         .offset(offset)
         .limit(pageSize);
-
+    if ( type && data) {
+        console.log("testt1");
+        query = query.where(type, data)
+    } 
+    if(type2 === 'criminalRecord'){
+        console.log("testt2");
+        console.log(type2);
+        query =  query.whereNotNull(type2);
+        // console.log(query);
+    }
+    if( type2 && data2 && type2 !== 'criminalRecord') {
+        query= query.andWhere(type2, data2);
+    }
+    let users = await query;
+    if(!users)
+        return;
     // Sử dụng Promise.all để đợi tất cả các câu truy vấn trong vòng lặp hoàn thành
     users = Object.values(JSON.parse(JSON.stringify(users)));
     await Promise.all(
@@ -33,11 +46,24 @@ const getUsers = async (page, pageSize, type, data) => {
         }),
     );
 
-    const totalPageData = await knex('citizens')
+    let query2 = knex('citizens')
         .count('idCitizen as count')
-        .where(type, 'like', `%${data}%`);
+        if ( type && data) {
+            console.log("test1");
+            query2 = query2.where(type, data)
+        } 
+        if(type2 === 'criminalRecord'){
+            console.log("test2");
+            query = query.andWhere(type2 + ' IS NULL');
+        }
+        if( type2 && data2 && type2 !== 'criminalRecord') {
+            console.log("test3");
+            query= query.andWhere(type2, data);
+        }
+    const  totalPageData = await query2;
     const totalPages = Math.ceil(totalPageData[0].count / pageSize);
 
+    console.log('citizen', users);
     return {
         users,
         totalPages,
@@ -50,10 +76,12 @@ const getUserByData = async (type1, data1, type2, data2, type3, data3) => {
         let query = knex('citizens').select('*').where(type1, data1);
 
         if (type2 && data2) {
+            console.log("test4");
             query = query.andWhere(type2, data2);
         }
 
         if (type3 && data3) {
+            console.log("test5");
             query = query.andWhere(type3, data3);
         }
 

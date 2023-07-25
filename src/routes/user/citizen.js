@@ -13,15 +13,22 @@ const { isAdmin, isPolitician } = require('../../middleware/authorization');
 user_router.get('/', authentication, async (req, res) => {
     try {
         const page_Size = parseInt(req.query.pageSize) || 10;
-        const { page = 1, type = 'idCitizen', data='' } = req.body;
+        const { page = 1, type='', data='', type2='', data2=''} = req.body;
 
         const { users, totalPage, totalPageData } = await getUsers(
             page,
             page_Size,
-            type,
-            data,
+            type, 
+            data, 
+            type2, 
+            data2
         );
-
+        if(!users){
+            return res.status(404).json({
+                status: 'failed',
+                message: 'Not found users',
+            });
+        }
         return res.status(200).json({
             status: 'success',
             data: users,
@@ -73,7 +80,7 @@ user_router.get('/listUsers/:role', authentication, async (req, res) => {
     }
 });
 
-user_router.get('/:id', authentication, async (req, res) => {
+user_router.get('/:id',authentication,  async (req, res) => {
     const id = parseInt(req.params.id);
     try {
         const user = await getUserByData('idCitizen', id);

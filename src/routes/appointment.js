@@ -2,7 +2,6 @@ const express = require('express');
 const appointment_router = express.Router();
 const authentication = require('../middleware/authentication')
 const { getAppointments, getAppointmentsByData, addAppointment, updateAppointment, deleteAppointment } = require('../database/query/appointmentQuery');
-const { isPolitician } = require('../middleware/authorization');
 
 appointment_router.get('/', authentication, async(req, res) => {
     try {
@@ -34,7 +33,7 @@ appointment_router.get('/', authentication, async(req, res) => {
     }
 })
 
-appointment_router.get('/:type/:data', [authentication, isPolitician],  async (req, res) => {
+appointment_router.get('/:type/:data', [authentication],  async (req, res) => {
     try {
         const data = req.params.data;
         const type = req.params.type;
